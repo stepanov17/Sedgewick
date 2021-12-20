@@ -23,8 +23,23 @@ public class Dijkstra {
     public Dijkstra(Graph g, int s) {
 
         this.g = g;
+        checkWeights();
         this.s = s;
     }
+
+    private void checkWeights() {
+
+        for (int v = 0; v < g.getNV(); ++v) {
+            for (Edge e: g.getAdj(v)) {
+                if (e.getWeight() < 0) {
+                    int to = e.getTo();
+                    throw new IllegalArgumentException(
+                            v + " -> " + to + ": negative edge weight");
+                }
+            }
+        }
+    }
+
 
     public void calculateShortestPaths() {
 
