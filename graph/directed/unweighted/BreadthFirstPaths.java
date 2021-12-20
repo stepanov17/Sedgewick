@@ -1,0 +1,69 @@
+
+package graph.directed.unweighted;
+
+import java.util.LinkedList;
+
+public class BreadthFirstPaths {
+
+    private final Graph g;
+    private final int   v0;
+
+    private boolean marked[];
+    private int     edgeTo[];
+
+    public BreadthFirstPaths(Graph g, int v0) {
+
+        this.g  = g;
+        this.v0 = v0;
+    }
+
+    public void findPaths() {
+
+        marked = new boolean[g.getNV()];
+        edgeTo = new int[g.getNV()];
+
+        bfs(v0);
+    }
+
+    // gives shortest path
+    private void bfs(int v) {
+
+        LinkedList<Integer> list = new LinkedList<>();
+
+        // mark and enqueue the initial v
+        marked[v] = true;
+        list.addLast(v);
+
+        while (!list.isEmpty()) {
+
+            int u = list.removeFirst(); // take next vertex from the queue
+            for (int w: g.getAdj(u)) {
+                if (!marked[w]) {      // for every unmaked adjacent vertex
+                    edgeTo[w] = u;     // add to path
+                    marked[w] = true;
+                    list.addLast(w);   // enqueue
+                }
+            }
+        }
+    }
+
+    public boolean isReachable(int v) { return marked[v]; }
+
+    public Iterable<Integer> pathTo(int v) {
+
+        if (!isReachable(v)) { return null; }
+        LinkedList<Integer> path = new LinkedList<>();
+        for (int w = v; w != v0; w = edgeTo[w]) { path.addFirst(w); }
+        path.addFirst(v0);
+        return path;
+    }
+
+    public static void main(String args[]) {
+
+        Graph g = new Graph(Example.n2, Example.e2);
+        BreadthFirstPaths bfp = new BreadthFirstPaths(g, 0);
+        bfp.findPaths();
+
+        System.out.println(bfp.pathTo(8));
+    }
+}
